@@ -1,9 +1,10 @@
 import "dotenv/config";
 import setGenres from "../db/seedGenres";
 import setMovies from "../db/seedMovies";
+import setTestUsers from '../db/seedTestUser'
 import axios from "axios";
 
-(async function initializeGenre() {
+(async function initializeGenres() {
   try {
     const output = await axios.get(
       `https://api.themoviedb.org/3/genre/movie/list?api_key=${process.env.tmdbKey}&language=en-US`
@@ -15,6 +16,7 @@ import axios from "axios";
   }
 });
 
+//two api calls to different tmdb api routes are needed to gather all the info of a movie needed
 (async function initializeMonthlyMovies() {
   async function fetchAdditionalMovieInfo(id) {
     const output = await axios.get(`
@@ -22,6 +24,7 @@ import axios from "axios";
     `);
     return output.data;
   }
+  //FIRST API CALL
   try {
     let pageNumber = 1;
     const movies = [];
@@ -52,6 +55,8 @@ import axios from "axios";
     }
     await Promise.allSettled(moviesAfterPageOne);
     const movieObjs = [];
+    //Once all basic movie info is aquired from tmdb, get additional info such as production company from tmdb api (details)
+    //SECOND API CALL
     Promise.allSettled(
       movies.map((movie) =>
         fetchAdditionalMovieInfo(movie.id).then((additionalInfo) => ({
@@ -63,6 +68,7 @@ import axios from "axios";
       for (let movie of movies) {
         movieObjs.push(movie.value);
       }
+      //send the completed movie jsons to firebase
       setMovies(movieObjs);
     });
 
@@ -70,4 +76,8 @@ import axios from "axios";
   } catch (e) {
     console.log(e);
   }
-})();
+});
+(async function initializeUsers () {
+  await setTestUsers()
+  console.log('Test users set!')
+})()
