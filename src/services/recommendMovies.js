@@ -1,7 +1,9 @@
 require("dotenv").config();
 import fetchFilters from "../db/fetchFilters";
+import sendEmail from "./sendEmail";
 import axios from "axios";
 import moment from "moment";
+import generateEmail from "./generateEmail";
 
 async function getIdOfCasts(castArr) {
   const fetchIdPromises = castArr.map((cast) =>
@@ -108,7 +110,6 @@ async function getResultsForOneFilter(filter) {
   const match = filter.match;
   if (filter.cast) {
     castIdsArr = await getIdOfCasts(filter.cast);
-    // console.log("castIdsArr", castIdsArr);
   }
   if (filter.genre) {
     genreIdsArr = filter.genre;
@@ -119,27 +120,60 @@ async function getResultsForOneFilter(filter) {
   if (filter.director) {
     directorIdsArr = await getIdOfCasts(filter.director);
   }
-  return discoverMovies(
+  const filterResult = await discoverMovies(
     castIdsArr,
     genreIdsArr,
     companyIdsArr,
     directorIdsArr,
     match
   );
+  return { name: filter.name, results: filterResult };
 }
 
-function recommendMoviesForUser(userFilters) {
+async function recommendMoviesForUser(userFilters) {
   //All filters
   const email = userFilters.email;
   const filters = userFilters.filters;
-  const allFiltersResults = Object.values(filters).map(getResultsForOneFilter);
+  const allFiltersResults = Object.values(filters).map((filter) => {
+    if (filter.enabled) {
+      return getResultsForOneFilter(filter);
+    } else {
+      return { name: filter.name, results: null };
+    }
+  });
 
-  Promise.all(allFiltersResults).then((val) => console.log("second", val));
+  const moviesForUser = await Promise.all(allFiltersResults);
+  function transformToEmailContext(filter) {
+    if (filter.results) {
+      return filter.results.map((result) => ({
+        imagePath: result["poster_path"]
+          ? "https://image.tmdb.org/t/p/original/" + result["poster_path"]
+          : "https://drive.google.com/uc?id=1VACVMbk6BHr1ae3JMYBHarXruWVn-whE",
+        title: result.title,
+        tag: result.overview,
+      }));
+    } else {
+      return null;
+    }
+  }
+  //looping through return results of user's filters
+  let filterResults = [];
+  for (const filter of moviesForUser) {
+    filterResults.push({
+      name: filter.name,
+      results: transformToEmailContext(filter),
+    });
+  }
+  return { email, filterResults };
 }
 
 export default async function recommendMovies() {
-  const userFiltersArr = await fetchFilters();
-
-  recommendMoviesForUser(userFiltersArr[0]);
+  const users = await fetchFilters();
+  const fetchUsersMovies = users.map((users) => recommendMoviesForUser(users));
+  const usersMovies = await Promise.all(fetchUsersMovies);
+  for (const user of usersMovies) {
+    const msg = generateEmail(user);
+    sendEmail(msg);
+  }
 }
 recommendMovies();

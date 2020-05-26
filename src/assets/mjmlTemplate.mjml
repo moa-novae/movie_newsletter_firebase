@@ -1,0 +1,29 @@
+<mjml>
+  <mj-body>
+    <mj-section>
+      <mj-column>
+        <mj-text font-weight="bold" align="center" font-size="40px" color="#9100ff" font-family="helvetica">Movie Newsletter</mj-text>
+      </mj-column>
+    </mj-section>
+    {{#each .}}
+    {{#if filterName}}
+    <mj-section>
+    <mj-column>
+    <mj-text font-size="24px">
+    {{filterName}}
+    </mj-text>
+    </mj-column>
+    </mj-section>
+    {{/if}}
+    <mj-section>
+    {{#movies}}
+    <mj-column>
+      <mj-image width="165px" src={{imagePath}}></mj-image>
+      <mj-text font-weight="bold" align="center" font-size="16px" color="#000" font-family="helvetica">{{title}}</mj-text>
+      <mj-text align="justify" font-size="13px" color="#000" font-family="helvetica">{{tag}}</mj-text>
+    </mj-column>
+    {{/movies}}
+    </mj-section>
+    {{/each}}
+  </mj-body>
+</mjml>
