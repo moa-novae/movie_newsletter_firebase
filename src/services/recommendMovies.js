@@ -1,5 +1,5 @@
 require("dotenv").config();
-import schedule from 'node-schedule'
+import schedule from "node-schedule";
 import fetchFilters from "../db/fetchFilters";
 import sendEmail from "./sendEmail";
 import axios from "axios";
@@ -45,32 +45,33 @@ async function discoverMovies(
   match
 ) {
   const currentDate = moment().format("YYYY-MM-DD");
-  const oneMonthFuture = moment().add(1, 'M').format("YYYY-MM-DD")
+  const threeMonthFuture = moment().add(3, "M").format("YYYY-MM-DD");
   if (match === "all") {
-    const castsStr = castIdsArr?.join("") || null;
-    const genresStr = genreIdsArr?.join("") || null;
-    const companiesStr = companyIdsArr?.join("") || null;
-    const directorsStr = directorIdsArr?.join("") || null;
+    const castsStr = castIdsArr?.join("") || "";
+    const genresStr = genreIdsArr?.join("") || "";
+    const companiesStr = companyIdsArr?.join("") || "";
+    const directorsStr = directorIdsArr?.join("") || "";
     const output = await axios.get(
-      `https://api.themoviedb.org/3/discover/movie?api_key=${process.env.tmdbKey}&sort_by=popularity.desc&include_adult=false&include_video=false&page=1&primary_release_date.gte=${currentDate}&primary_release_date.lte=${oneMonthFuture}&with_cast=${castsStr}&with_genres=${genresStr}&with_companies=${companiesStr}&with_crew=${directorsStr}`
+      `https://api.themoviedb.org/3/discover/movie?api_key=${process.env.tmdbKey}&sort_by=popularity.desc&include_adult=false&include_video=false&page=1&primary_release_date.gte=${currentDate}&primary_release_date.lte=${threeMonthFuture}&with_cast=${castsStr}&with_genres=${genresStr}&with_companies=${companiesStr}&with_crew=${directorsStr}`
     );
+    
     return output.data.results;
   }
   if (match === "any") {
-    const castsStr = castIdsArr.join("|") || null;
-    const genresStr = genreIdsArr?.join("|") || null;
-    const companiesStr = companyIdsArr?.join("|") || null;
-    const directorsStr = directorIdsArr?.join("|") || null;
+    const castsStr = castIdsArr.join("|") || "";
+    const genresStr = genreIdsArr?.join("|") || "";
+    const companiesStr = companyIdsArr?.join("|") || "";
+    const directorsStr = directorIdsArr?.join("|") || "";
     const finalResults = [];
     if (castsStr) {
       const output = await axios.get(
-        `https://api.themoviedb.org/3/discover/movie?api_key=${process.env.tmdbKey}&sort_by=popularity.desc&include_adult=false&include_video=false&page=1&primary_release_date.gte=${currentDate}&primary_release_date.lte=${oneMonthFuture}&with_cast=${castsStr}`
+        `https://api.themoviedb.org/3/discover/movie?api_key=${process.env.tmdbKey}&sort_by=popularity.desc&include_adult=false&include_video=false&page=1&primary_release_date.gte=${currentDate}&primary_release_date.lte=${threeMonthFuture}&with_cast=${castsStr}`
       );
       finalResults.push(...output.data.results);
     }
     if (genresStr) {
       const output = await axios.get(
-        `https://api.themoviedb.org/3/discover/movie?api_key=${process.env.tmdbKey}&sort_by=popularity.desc&include_adult=false&include_video=false&page=1&primary_release_date.gte=${currentDate}&primary_release_date.lte=${oneMonthFuture}&with_genres=${genresStr}`
+        `https://api.themoviedb.org/3/discover/movie?api_key=${process.env.tmdbKey}&sort_by=popularity.desc&include_adult=false&include_video=false&page=1&primary_release_date.gte=${currentDate}&primary_release_date.lte=${threeMonthFuture}&with_genres=${genresStr}`
       );
       for (const result of output.data.results) {
         if (finalResults.every((finalResult) => finalResult.id !== result.id)) {
@@ -80,7 +81,7 @@ async function discoverMovies(
     }
     if (companiesStr) {
       const output = await axios.get(
-        `https://api.themoviedb.org/3/discover/movie?api_key=${process.env.tmdbKey}&sort_by=popularity.desc&include_adult=false&include_video=false&page=1&primary_release_date.gte=${currentDate}&primary_release_date.lte=${oneMonthFuture}&with_companies=${companiesStr}`
+        `https://api.themoviedb.org/3/discover/movie?api_key=${process.env.tmdbKey}&sort_by=popularity.desc&include_adult=false&include_video=false&page=1&primary_release_date.gte=${currentDate}&primary_release_date.lte=${threeMonthFuture}&with_companies=${companiesStr}`
       );
       for (const result of output.data.results) {
         if (finalResults.every((finalResult) => finalResult.id !== result.id)) {
@@ -90,7 +91,7 @@ async function discoverMovies(
     }
     if (directorsStr) {
       const output = await axios.get(
-        `https://api.themoviedb.org/3/discover/movie?api_key=${process.env.tmdbKey}&sort_by=popularity.desc&include_adult=false&include_video=false&page=1&primary_release_date.gte=${currentDate}&primary_release_date.lte=${oneMonthFuture}&with_crew=${directorsStr}`
+        `https://api.themoviedb.org/3/discover/movie?api_key=${process.env.tmdbKey}&sort_by=popularity.desc&include_adult=false&include_video=false&page=1&primary_release_date.gte=${currentDate}&primary_release_date.lte=${threeMonthFuture}&with_crew=${directorsStr}`
       );
       for (const result of output.data.results) {
         if (finalResults.every((finalResult) => finalResult.id !== result.id)) {
@@ -179,10 +180,11 @@ export default async function recommendMovies() {
   }
 }
 
-function sendMontlyNewsletter () {
-  schedule.scheduleJob({hour: 6, date: 1}, function(){
+function sendMontlyNewsletter() {
+  schedule.scheduleJob({ hour: 6, date: 1 }, function () {
     recommendMovies();
-  })
+  });
 }
 
 sendMontlyNewsletter();
+// recommendMovies();

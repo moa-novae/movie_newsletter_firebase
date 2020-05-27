@@ -112,7 +112,7 @@ export default function generateEmail(user) {
   const mjml = template(context);
   const html = mjml2html(mjml);
   let msg = {};
-  msg.to = "amo719733@gmail.com";
+  msg.to = user.email;
   msg.from = process.env.testEmail;
   msg.subject = "Montly Movie Newsletter";
   msg.html = html.html;
