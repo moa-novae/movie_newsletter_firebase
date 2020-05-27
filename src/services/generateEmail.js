@@ -35,7 +35,7 @@ export default function generateEmail(user) {
         {{#movies}}
           <mj-column>
             <mj-image width="165px" src={{imagePath}}></mj-image>
-            <mj-text font-weight="bold" align="justify" font-size="16px" color="#000" font-family="helvetica">{{title}}</mj-text>
+            <mj-text font-weight="bold" align="center" font-size="16px" color="#000" font-family="helvetica">{{title}}</mj-text>
             <mj-text align="left" font-size="13px" color="#000" font-family="helvetica">{{tag}}</mj-text>
           </mj-column>
         {{/movies}}
@@ -109,7 +109,6 @@ export default function generateEmail(user) {
   }
   const temp = transformUserToEmailContext(user);
   const context = addBlankToShortRows(temp);
-  console.log(context);
   const mjml = template(context);
   const html = mjml2html(mjml);
   let msg = {};
