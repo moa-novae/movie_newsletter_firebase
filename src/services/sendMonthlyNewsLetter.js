@@ -54,7 +54,7 @@ async function discoverMovies(
     const output = await axios.get(
       `https://api.themoviedb.org/3/discover/movie?api_key=${process.env.tmdbKey}&sort_by=popularity.desc&include_adult=false&include_video=false&page=1&primary_release_date.gte=${currentDate}&primary_release_date.lte=${threeMonthFuture}&with_cast=${castsStr}&with_genres=${genresStr}&with_companies=${companiesStr}&with_crew=${directorsStr}`
     );
-    
+
     return output.data.results;
   }
   if (match === "any") {
@@ -146,6 +146,7 @@ async function recommendMoviesForUser(userFilters) {
   });
 
   const moviesForUser = await Promise.all(allFiltersResults);
+  //transform to correct strucuture for handlebar template
   function transformToEmailContext(filter) {
     if (filter.results) {
       return filter.results.map((result) => ({
@@ -170,7 +171,7 @@ async function recommendMoviesForUser(userFilters) {
   return { email, filterResults };
 }
 
-export default async function recommendMovies() {
+export default async function sendNewsletter() {
   const users = await fetchFilters();
   const fetchUsersMovies = users.map((users) => recommendMoviesForUser(users));
   const usersMovies = await Promise.all(fetchUsersMovies);
@@ -179,12 +180,11 @@ export default async function recommendMovies() {
     sendEmail(msg);
   }
 }
-
-function sendMontlyNewsletter() {
+//send newsletter every month 
+function sendMonthlyNewsletter() {
   schedule.scheduleJob({ hour: 6, date: 1 }, function () {
-    recommendMovies();
+    sendNewsletter();
   });
 }
 
-sendMontlyNewsletter();
-// recommendMovies();
+sendMonthlyNewsletter();

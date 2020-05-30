@@ -7,10 +7,10 @@ function deleteAllUsers(nextPageToken) {
   });
   admin
     .auth()
-    .listUsers()
+    .listUsers(100, nextPageToken)
     .then(function (listUsersResult) {
       listUsersResult.users.forEach(function (userRecord) {
-        admin.auth().deleteUser(userRecord.uid);
+        admin.auth().deleteUser(userRecord.toJSON().uid);
       });
       if (listUsersResult.pageToken) {
         deleteAllUsers(listUsersResult.pageToken);
