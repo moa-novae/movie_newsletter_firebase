@@ -33,7 +33,6 @@
     "@babel/cli": "^7.10.1",
     "@babel/core": "^7.10.1",
     "@babel/node": "^7.10.1",
-    "babel-cli": "^6.26.0",
     "nodemon": "^2.0.4"
   }
 }
