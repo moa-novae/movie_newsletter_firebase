@@ -1,2 +1,2 @@
-worker: yarn sendMoviesNow
-worker: yarn test
+worker: yarn herokuSendMonthlyMovies
+worker: yarn herokuTest

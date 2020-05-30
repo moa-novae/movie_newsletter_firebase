@@ -1,0 +1,1 @@
+{"version":3,"sources":["../../src/services/sendNewsletter.js"],"names":[],"mappings":";;AAAA;;;;AACA","sourcesContent":["import sendNewsletter from \"./sendMonthlyNewsLetter\";\nsendNewsletter();\n"],"file":"sendNewsletter.js"}
