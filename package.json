@@ -5,10 +5,10 @@
   "license": "MIT",
   "scripts": {
     "start": "nodemon --exec babel-node src/index.js",
-    "test": "nodemon --exec babel-node src/db/test.js",
+    "test": "babel-node src/db/test.js",
     "initializeDb": "nodemon --exec babel-node src/services/initializeDb.js",
     "deleteAllUsers": "nodemon --exec babel-node src/services/deleteAllUsers.js",
-    "sendMonthlyMovies": "nodemon --exec babel-node src/services/sendMonthlyNewsLetter.js",
+    "sendMonthlyMovies": "babel-node src/services/sendMonthlyNewsLetter.js",
     "sendMoviesNow": "nodemon --exec babel-node src/services/sendNewsletter.js"
   },
   "description": "Admin control over movie_newsletter_firebase database",
@@ -29,6 +29,6 @@
     "@babel/core": "^7.9.6",
     "@babel/node": "^7.8.7",
     "@babel/preset-env": "^7.9.6",
-    "nodemon": "^2.0.3"
+    "nodemon": "^2.0.4"
   }
 }
