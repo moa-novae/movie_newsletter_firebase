@@ -4,6 +4,9 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
+    "clean": "rm -rf build && mkdir build",
+    "build-babel": "babel -d ./build ./src -s",
+    "build": "npm run clean && npm run build-babel",
     "start": "nodemon --exec babel-node src/index.js",
     "test": "babel-node src/db/test.js",
     "initializeDb": "nodemon --exec babel-node src/services/initializeDb.js",
@@ -13,6 +16,7 @@
   },
   "description": "Admin control over movie_newsletter_firebase database",
   "dependencies": {
+    "@babel/preset-env": "^7.9.6",
     "@sendgrid/mail": "^7.1.1",
     "axios": "^0.19.2",
     "body-parser": "^1.19.0",
@@ -28,7 +32,7 @@
   "devDependencies": {
     "@babel/core": "^7.9.6",
     "@babel/node": "^7.8.7",
-    "@babel/preset-env": "^7.9.6",
+    "babel-cli": "^6.26.0",
     "nodemon": "^2.0.4"
   }
 }
