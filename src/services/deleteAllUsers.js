@@ -1,5 +1,6 @@
 import * as admin from "firebase-admin";
-const serviceAccount = require("../../serviceAccountKey.json");
+require("dotenv").config();
+const serviceAccount = JSON.parse(process.env.serviceAccount);
 function deleteAllUsers(nextPageToken) {
   admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
