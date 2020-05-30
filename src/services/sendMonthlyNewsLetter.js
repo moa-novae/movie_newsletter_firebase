@@ -182,7 +182,7 @@ export default async function sendNewsletter() {
 }
 //send newsletter every month 
 function sendMonthlyNewsletter() {
-  schedule.scheduleJob({ hour: 6, date: 1 }, function () {
+  schedule.scheduleJob({ hour: 6, minute: 10, date: 1 }, function () {
     sendNewsletter();
   });
 }
